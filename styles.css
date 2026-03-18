@@ -834,6 +834,32 @@ footer p {
     box-shadow: var(--shadow-xl);
 }
 
+/* Mascotte Lion */
+.lion-mascot {
+    position: fixed;
+    font-size: 3rem;
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.15s ease-out;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    animation: lionBounce 2s ease-in-out infinite;
+}
+
+@keyframes lionBounce {
+    0%, 100% {
+        transform: translateY(0) rotate(-5deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .lion-mascot {
+        font-size: 2.5rem;
+    }
+}
+
 @media (max-width: 768px) {
     .gallery-grid {
         grid-template-columns: 1fr;

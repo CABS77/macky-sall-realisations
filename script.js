@@ -234,6 +234,53 @@ document.querySelectorAll('.achievement-card, .gallery-item').forEach(element =>
 console.log('Site des réalisations de Macky Sall chargé avec succès! 🇸🇳');
 
 
+// Mascotte Lion qui suit le curseur/doigt
+const lionMascot = document.querySelector('.lion-mascot');
+let mouseX = 0;
+let mouseY = 0;
+let lionX = 0;
+let lionY = 0;
+const speed = 0.1; // Vitesse de suivi (plus petit = plus lent et fluide)
+
+// Suivre la souris sur ordinateur
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+// Suivre le doigt sur mobile
+document.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 0) {
+        mouseX = e.touches[0].clientX;
+        mouseY = e.touches[0].clientY;
+    }
+});
+
+// Animation fluide du lion
+function animateLion() {
+    // Interpolation pour un mouvement fluide
+    lionX += (mouseX - lionX) * speed;
+    lionY += (mouseY - lionY) * speed;
+    
+    // Positionner le lion avec un léger décalage pour ne pas cacher le curseur
+    lionMascot.style.left = (lionX + 20) + 'px';
+    lionMascot.style.top = (lionY + 20) + 'px';
+    
+    requestAnimationFrame(animateLion);
+}
+
+// Démarrer l'animation
+animateLion();
+
+// Initialiser la position du lion au centre de l'écran
+window.addEventListener('load', () => {
+    mouseX = window.innerWidth / 2;
+    mouseY = window.innerHeight / 2;
+    lionX = mouseX;
+    lionY = mouseY;
+});
+
+
 // Gestion des images manquantes avec placeholder élégant
 document.addEventListener('DOMContentLoaded', () => {
     const images = document.querySelectorAll('img');
