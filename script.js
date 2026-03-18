@@ -243,6 +243,9 @@ let lionY = 0;
 const speed = 0.1; // Vitesse de suivi (plus petit = plus lent et fluide)
 let isMobile = window.innerWidth <= 768;
 let autoMoveInterval;
+let lionState = 'idle'; // États: idle, running, jumping
+let lastX = 0;
+let lastY = 0;
 
 // Détecter si on est sur mobile
 window.addEventListener('resize', () => {
@@ -271,6 +274,11 @@ function startAutoMove() {
         const margin = 100; // Marge pour éviter les bords
         mouseX = margin + Math.random() * (window.innerWidth - margin * 2);
         mouseY = margin + Math.random() * (window.innerHeight - margin * 2);
+        
+        // Déclencher un saut aléatoirement (30% de chance)
+        if (Math.random() < 0.3) {
+            triggerJump();
+        }
     }, 3000); // Changer de position toutes les 3 secondes
 }
 
@@ -281,17 +289,92 @@ function stopAutoMove() {
     }
 }
 
+// Déclencher un saut
+function triggerJump() {
+    if (lionState === 'jumping') return;
+    
+    lionState = 'jumping';
+    lionMascot.classList.remove('running', 'idle');
+    lionMascot.classList.add('jumping');
+    
+    setTimeout(() => {
+        lionMascot.classList.remove('jumping');
+        lionState = 'idle';
+        updateLionState();
+    }, 800); // Durée de l'animation de saut
+}
+
+// Mettre à jour l'état du lion (course ou repos)
+function updateLionState() {
+    const distance = Math.sqrt(Math.pow(mouseX - lionX, 2) + Math.pow(mouseY - lionY, 2));
+    
+    if (lionState === 'jumping') return; // Ne pas changer l'état pendant un saut
+    
+    if (distance > 50) {
+        // Le lion court s'il est loin de sa cible
+        if (lionState !== 'running') {
+            lionState = 'running';
+            lionMascot.classList.remove('idle');
+            lionMascot.classList.add('running');
+        }
+    } else {
+        // Le lion est au repos s'il est proche de sa cible
+        if (lionState !== 'idle') {
+            lionState = 'idle';
+            lionMascot.classList.remove('running');
+            lionMascot.classList.add('idle');
+        }
+    }
+}
+
 // Animation fluide du lion
 function animateLion() {
     // Interpolation pour un mouvement fluide
     lionX += (mouseX - lionX) * speed;
     lionY += (mouseY - lionY) * speed;
     
-    // Positionner le lion avec un léger décalage pour ne pas cacher le curseur
-    lionMascot.style.left = (lionX + 20) + 'px';
-    lionMascot.style.top = (lionY + 20) + 'px';
+    // Calculer la direction pour orienter le lion
+    const deltaX = mouseX - lastX;
+    if (Math.abs(deltaX) > 1) {
+        // Retourner le lion dans la direction du mouvement
+        if (deltaX < 0) {
+            lionMascot.style.transform = 'scaleX(-1)';
+        } else {
+            lionMascot.style.transform = 'scaleX(1)';
+        }
+    }
+    
+    // Positionner le lion
+    lionMascot.style.left = lionX + 'px';
+    lionMascot.style.top = lionY + 'px';
+    
+    // Mettre à jour l'état du lion
+    updateLionState();
+    
+    lastX = lionX;
+    lastY = lionY;
     
     requestAnimationFrame(animateLion);
+}
+
+// Saut au clic sur le lion (sur ordinateur)
+if (!isMobile) {
+    document.addEventListener('click', (e) => {
+        // Vérifier si le clic est proche du lion
+        const distance = Math.sqrt(Math.pow(e.clientX - lionX, 2) + Math.pow(e.clientY - lionY, 2));
+        if (distance < 100) {
+            triggerJump();
+        }
+    });
+}
+
+// Saut aléatoire sur mobile toutes les 5-10 secondes
+if (isMobile) {
+    setInterval(() => {
+        if (Math.random() < 0.5) {
+            triggerJump();
+        }
+    }, 7000);
 }
 
 // Démarrer l'animation
@@ -303,11 +386,16 @@ window.addEventListener('load', () => {
     mouseY = window.innerHeight / 2;
     lionX = mouseX;
     lionY = mouseY;
+    lastX = lionX;
+    lastY = lionY;
     
     // Démarrer le mouvement automatique sur mobile
     if (isMobile) {
         startAutoMove();
     }
+    
+    // Mettre le lion en mode repos au départ
+    lionMascot.classList.add('idle');
 });
 
 
