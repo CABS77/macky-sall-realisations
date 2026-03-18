@@ -1,0 +1,11 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires
+*.tmp
+*.log
+
+# Dossiers de développement
+node_modules/
+.vercel/
