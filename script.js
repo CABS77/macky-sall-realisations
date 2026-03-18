@@ -241,20 +241,45 @@ let mouseY = 0;
 let lionX = 0;
 let lionY = 0;
 const speed = 0.1; // Vitesse de suivi (plus petit = plus lent et fluide)
+let isMobile = window.innerWidth <= 768;
+let autoMoveInterval;
+
+// Détecter si on est sur mobile
+window.addEventListener('resize', () => {
+    isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+        startAutoMove();
+    } else {
+        stopAutoMove();
+    }
+});
 
 // Suivre la souris sur ordinateur
 document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
-// Suivre le doigt sur mobile
-document.addEventListener('touchmove', (e) => {
-    if (e.touches.length > 0) {
-        mouseX = e.touches[0].clientX;
-        mouseY = e.touches[0].clientY;
+    if (!isMobile) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
     }
 });
+
+// Sur mobile : mouvement automatique aléatoire
+function startAutoMove() {
+    if (autoMoveInterval) return;
+    
+    autoMoveInterval = setInterval(() => {
+        // Générer une position aléatoire dans la fenêtre
+        const margin = 100; // Marge pour éviter les bords
+        mouseX = margin + Math.random() * (window.innerWidth - margin * 2);
+        mouseY = margin + Math.random() * (window.innerHeight - margin * 2);
+    }, 3000); // Changer de position toutes les 3 secondes
+}
+
+function stopAutoMove() {
+    if (autoMoveInterval) {
+        clearInterval(autoMoveInterval);
+        autoMoveInterval = null;
+    }
+}
 
 // Animation fluide du lion
 function animateLion() {
@@ -278,6 +303,11 @@ window.addEventListener('load', () => {
     mouseY = window.innerHeight / 2;
     lionX = mouseX;
     lionY = mouseY;
+    
+    // Démarrer le mouvement automatique sur mobile
+    if (isMobile) {
+        startAutoMove();
+    }
 });
 
 
