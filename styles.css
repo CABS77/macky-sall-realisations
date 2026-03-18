@@ -314,6 +314,12 @@ nav .container {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: var(--shadow-xl);
+    transition: transform 0.3s ease;
+}
+
+.video-showcase:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
 }
 
 .video-container {
@@ -321,6 +327,9 @@ nav .container {
     padding-bottom: 56.25%;
     height: 0;
     overflow: hidden;
+    background: linear-gradient(135deg, #00853f 0%, #006b33 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .video-container iframe,
@@ -330,6 +339,15 @@ nav .container {
     left: 0;
     width: 100%;
     height: 100%;
+    border-radius: 15px;
+}
+
+.video-container video {
+    object-fit: cover;
+}
+
+.video-container video::-webkit-media-controls-panel {
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8));
 }
 
 .video-description {
